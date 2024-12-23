@@ -36,9 +36,10 @@ export class AuthInterceptor implements NestInterceptor {
       const payload = this.jwtService.verify(token);
       request.user = payload;
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         { message: 'Token inválido ou expirado' },
-        error.status,
+        HttpStatus.BAD_REQUEST,
       );
     }
 
