@@ -17,6 +17,7 @@ export class AuthController {
   ) {}
 
   @Post('signin')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() body: { email: string; password: string }) {
     try {
       const user = await this.authService.validateUser(
