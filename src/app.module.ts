@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -22,6 +23,7 @@ import { UsersModule } from './user/user.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CacheModule.register({ ttl: 1000 * 60 * 60, max: 100 }),
   ],
   controllers: [AppController],
   providers: [AppService],

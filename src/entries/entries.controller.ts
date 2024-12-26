@@ -9,8 +9,10 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthInterceptor } from 'src/auth.interceptor';
 import { FavoritesService } from 'src/favorites/favorites.service';
 import { HistoryService } from 'src/history/history.service';
@@ -32,27 +34,39 @@ export class EntriesController {
     @Query('search') search: string = '',
     @Query('limit') limit: number = 10,
     @Query('page') page: number = 1,
+    @Res() res: Response,
   ) {
+    const start = Date.now();
+
     const cleanPage = Math.max(page, 1);
-    const { entries, total } = await this.entriesService.findAll(
+    const { result } = await this.entriesService.findAll(
       search,
       limit,
       cleanPage,
     );
-    const totalPages = Math.ceil(total / limit);
-    const results = entries.map((entry) => entry.entry);
-    return {
+    const totalPages = Math.ceil(result.total / limit);
+    const results = result.entries.map((entry) => entry.entry);
+
+    const responseTime = Date.now() - start;
+    res.setHeader('x-cache', result.fromCache ? 'HIT' : 'MISS');
+    res.setHeader('x-response-time', responseTime);
+    res.send({
       results,
-      totalDocs: total,
+      totalDocs: result.total,
       page: cleanPage,
       totalPages,
       hasNext: cleanPage < totalPages,
       hasPrev: cleanPage > 1,
-    };
+    });
   }
 
   @Get('en/:word')
-  async searchWord(@Param('word') word: string = '', @Req() req: any) {
+  async searchWord(
+    @Param('word') word: string = '',
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const start = Date.now();
     if (!word) {
       throw new HttpException(
         { message: 'A palavra é obrigatória' },
@@ -70,11 +84,15 @@ export class EntriesController {
     }
 
     try {
-      const data = await this.searchService.fetchWord(word);
+      const { data, fromCache } = await this.searchService.fetchWord(word);
+
+      const responseTime = Date.now() - start;
+      res.setHeader('x-cache', fromCache ? 'HIT' : 'MISS');
+      res.setHeader('x-response-time', responseTime);
 
       await this.historyService.saveSearch(word, userId);
 
-      return { word, data };
+      res.send({ word, data });
     } catch (error) {
       throw new HttpException(
         { message: 'Erro ao buscar a palavra' },

@@ -1,20 +1,44 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { lastValueFrom } from 'rxjs';
+
+interface SearchResponse {
+  fromCache: boolean;
+  data: any;
+}
 
 @Injectable()
 export class SearchService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
-  async fetchWord(word: string): Promise<any> {
+  async fetchWord(word: string): Promise<SearchResponse> {
     try {
       const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
+      const cacheKey = `search:${word}`;
+      const cachedData = await this.cacheManager.get(cacheKey);
+
+      if (cachedData) {
+        console.log('Cache hit');
+        return { fromCache: true, data: cachedData };
+      }
+
       const response = await lastValueFrom(this.httpService.get(url));
-      return response.data;
+
+      await this.cacheManager.set(cacheKey, response.data, 1000 * 60 * 60);
+
+      console.log('Cache miss');
+
+      return { fromCache: false, data: response.data };
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message ||
-          'Erro ao buscar a palavra na API externa',
+      throw new HttpException(
+        { message: 'Erro ao buscar a palavra na API externa' },
+        HttpStatus.BAD_REQUEST,
       );
     }
   }

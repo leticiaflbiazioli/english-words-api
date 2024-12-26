@@ -27,6 +27,10 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  async findById(_id: string): Promise<User | undefined> {
+    return this.userModel.findOne({ _id }).exec();
+  }
+
   async validatePassword(
     password: string,
     hashedPassword: string,

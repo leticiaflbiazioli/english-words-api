@@ -1,4 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -29,6 +30,7 @@ import { EntriesService } from './entries.service';
         signOptions: { expiresIn: '10h' },
       }),
     }),
+    CacheModule.register({ ttl: 1000 * 60 * 60, max: 100 }),
   ],
   providers: [
     EntriesService,
