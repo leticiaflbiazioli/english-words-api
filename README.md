@@ -1,8 +1,9 @@
-# 📖 Sistema de Gerenciamento de Palavras e Usuários
+# 📖 Sistema de Gerenciamento de Palavras em inglês
 
 ## 📝 Descrição
 
-Este projeto é uma API desenvolvida para gerenciar informações sobre palavras (pronúncia, significado, sinônimos, etc) através da [Free Dictionary API](https://dictionaryapi.dev/). Ele permite funcionalidades como registro e autenticação de usuários, busca por palavras, adição de favoritos e consulta ao histórico. Esse projeto possui uma aplicação front-end respectiva que pode ser consultada [nesse link](https://github.com/leticiaflbiazioli/english-words-app).
+Este projeto é uma API desenvolvida para gerenciar informações sobre palavras em inglês (pronúncia, significado, sinônimos, etc) através da [Free Dictionary API](https://dictionaryapi.dev/). Ele permite funcionalidades como registro e autenticação de usuários, busca por palavras, adição de favoritos e consulta ao histórico.
+Esse projeto possui uma aplicação front-end respectiva que pode ser consultada [nesse link](https://github.com/leticiaflbiazioli/english-words-app).
 Além disso, na pasta _scripts_ você vai encontrar um script para baixar uma lista de palavras desse [repositório](https://github.com/dwyl/english-words/blob/master/words_dictionary.json) e importar elas para o banco de dados.
 
 ---
@@ -201,6 +202,10 @@ Na pasta _scripts_, crie um arquivo _.env_ com as variáveis de ambiente necess�
 `cd src/scripts`
 `npm install`
 `node create-database.js`
+
+### **6. Consulte os endpoints**
+
+Na pasta _collection_ está disponível uma collection do Insomnia para teste dos endpoints.
 
 ---
 
