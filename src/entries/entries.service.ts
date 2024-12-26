@@ -31,7 +31,6 @@ export class EntriesService {
     const cachedData = await this.cacheManager.get<ResultEntries>(cacheKey);
 
     if (cachedData) {
-      console.log('Cache hit');
       return {
         result: {
           entries: cachedData.entries,
@@ -49,8 +48,6 @@ export class EntriesService {
     const result = { entries, total };
 
     await this.cacheManager.set(cacheKey, result, 1000 * 60 * 60);
-
-    console.log('Cache miss');
 
     return { result: { entries, total, fromCache: false } };
   }

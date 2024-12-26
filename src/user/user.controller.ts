@@ -6,9 +6,9 @@ import {
   Req,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthInterceptor } from 'src/auth.interceptor';
-import { FavoritesService } from 'src/favorites/favorites.service';
-import { HistoryService } from 'src/history/history.service';
+import { AuthInterceptor } from '../../src/auth.interceptor';
+import { FavoritesService } from '../../src/favorites/favorites.service';
+import { HistoryService } from '../../src/history/history.service';
 import { UserService } from './user.service';
 
 @Controller('user')

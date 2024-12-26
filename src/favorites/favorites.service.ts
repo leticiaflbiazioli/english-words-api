@@ -3,6 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Favorite } from './favorites.schema';
 
+interface FavoritesResult {
+  results: Favorite[];
+  totalDocs: number;
+  page: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 @Injectable()
 export class FavoritesService {
   constructor(
@@ -31,15 +40,21 @@ export class FavoritesService {
     };
   }
 
-  async getFavorites(userId: string, page: number = 1, limit: number = 10) {
-    const results = await this.favoriteModel
-      .find({ userId })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ favoritedAt: -1 })
-      .exec();
+  async getFavorites(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<FavoritesResult> {
+    const [results, totalDocs] = await Promise.all([
+      this.favoriteModel
+        .find({ userId })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort({ favoritedAt: -1 })
+        .exec(),
 
-    const totalDocs = await this.favoriteModel.countDocuments({ userId });
+      this.favoriteModel.countDocuments({ userId }),
+    ]);
 
     return {
       results,

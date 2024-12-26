@@ -13,10 +13,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AuthInterceptor } from 'src/auth.interceptor';
-import { FavoritesService } from 'src/favorites/favorites.service';
-import { HistoryService } from 'src/history/history.service';
-import { SearchService } from 'src/search/search.service';
+import { AuthInterceptor } from '../../src/auth.interceptor';
+import { FavoritesService } from '../../src/favorites/favorites.service';
+import { HistoryService } from '../../src/history/history.service';
+import { SearchService } from '../../src/search/search.service';
 import { EntriesService } from './entries.service';
 
 @Controller('entries')
@@ -94,7 +94,7 @@ export class EntriesController {
 
       res.send({ word, data });
     } catch (error) {
-      throw new HttpException(
+      throw new HttpException( //aqui
         { message: 'Erro ao buscar a palavra' },
         HttpStatus.BAD_REQUEST,
       );

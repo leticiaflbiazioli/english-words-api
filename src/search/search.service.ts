@@ -24,15 +24,12 @@ export class SearchService {
       const cachedData = await this.cacheManager.get(cacheKey);
 
       if (cachedData) {
-        console.log('Cache hit');
         return { fromCache: true, data: cachedData };
       }
 
       const response = await lastValueFrom(this.httpService.get(url));
 
       await this.cacheManager.set(cacheKey, response.data, 1000 * 60 * 60);
-
-      console.log('Cache miss');
 
       return { fromCache: false, data: response.data };
     } catch (error) {
