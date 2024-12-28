@@ -10,8 +10,18 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthInterceptor } from 'src/auth.interceptor';
 import { FavoritesService } from 'src/favorites/favorites.service';
@@ -19,6 +29,7 @@ import { HistoryService } from 'src/history/history.service';
 import { SearchService } from 'src/search/search.service';
 import { EntriesService } from './entries.service';
 
+@ApiTags('entries')
 @Controller('entries')
 @UseInterceptors(AuthInterceptor)
 export class EntriesController {
@@ -30,6 +41,31 @@ export class EntriesController {
   ) {}
 
   @Get('en')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buscar palavras' })
+  @ApiQuery({
+    name: 'search',
+    required: true,
+    type: String,
+    description: 'Termo de busca',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Limite de resultados por página',
+    default: 10,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Número da página',
+    default: 1,
+  })
+  @ApiResponse({ status: 200, description: 'Lista de palavras encontradas' })
+  @ApiResponse({ status: 400, description: 'Erro na busca das palavras' })
   async getWords(
     @Query('search') search: string = '',
     @Query('limit') limit: number = 10,
@@ -61,6 +97,20 @@ export class EntriesController {
   }
 
   @Get('en/:word')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buscar uma palavra específica' })
+  @ApiParam({
+    name: 'word',
+    type: String,
+    description: 'Palavra a ser buscada',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Informações sobre a palavra',
+    schema: { example: { word: 'example', data: {} } },
+  })
+  @ApiResponse({ status: 400, description: 'Erro ao buscar a palavra' })
   async searchWord(
     @Param('word') word: string = '',
     @Req() req: any,
@@ -107,7 +157,26 @@ export class EntriesController {
   }
 
   @Post('en/:word/favorite')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Adicionar palavra aos favoritos' })
+  @ApiParam({
+    name: 'word',
+    type: String,
+    description: 'Palavra a ser adicionada aos favoritos',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Palavra adicionada aos favoritos',
+    schema: {
+      example: { message: 'Palavra "example" adicionada aos favoritos' },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao adicionar a palavra aos favoritos',
+  })
   async favoriteWord(@Param('word') word: string, @Req() req: any) {
     const userId = req.user?.sub;
 
@@ -126,7 +195,26 @@ export class EntriesController {
   }
 
   @Delete('en/:word/unfavorite')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @HttpCode(200)
+  @ApiOperation({ summary: 'Remover palavra dos favoritos' })
+  @ApiParam({
+    name: 'word',
+    type: String,
+    description: 'Palavra a ser removida dos favoritos',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Palavra removida dos favoritos',
+    schema: {
+      example: { message: 'Palavra "example" removida dos favoritos' },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao remover a palavra dos favoritos',
+  })
   async unfavoriteWord(@Param('word') word: string, @Req() req: any) {
     const userId = req.user?.sub;
 

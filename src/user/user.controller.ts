@@ -4,13 +4,22 @@ import {
   HttpException,
   HttpStatus,
   Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthInterceptor } from 'src/auth.interceptor';
 import { FavoritesService } from 'src/favorites/favorites.service';
 import { HistoryService } from 'src/history/history.service';
 import { UserService } from './user.service';
 
+@ApiTags('user')
 @Controller('user')
 @UseInterceptors(AuthInterceptor)
 export class UserController {
@@ -21,6 +30,25 @@ export class UserController {
   ) {}
 
   @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Obter o perfil do usuário' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil do usuário',
+    schema: {
+      example: {
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        history: [],
+        favorites: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao obter o perfil do usuário',
+  })
   async getProfile(@Req() req: any) {
     const userId = req.user?.sub;
 
@@ -46,6 +74,24 @@ export class UserController {
   }
 
   @Get('me/history')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Obter o histórico do usuário' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Histórico do usuário',
+    schema: {
+      example: {
+        results: [{ word: 'example', added: '2024-01-01' }],
+        totalDocs: 10,
+        page: 1,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false,
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Erro ao obter o histórico' })
   async getHistory(@Req() req: any) {
     const userId = req.user?.sub;
     if (!userId) {
@@ -75,6 +121,24 @@ export class UserController {
   }
 
   @Get('me/favorites')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Obter os favoritos do usuário' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Favoritos do usuário',
+    schema: {
+      example: {
+        results: [{ word: 'example', added: '2024-01-01' }],
+        totalDocs: 10,
+        page: 1,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false,
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Erro ao obter os favoritos' })
   async getFavorites(@Req() req: any) {
     const userId = req.user?.sub;
     if (!userId) {

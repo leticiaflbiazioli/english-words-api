@@ -203,9 +203,13 @@ Na pasta _scripts_, crie um arquivo _.env_ com as variáveis de ambiente necess�
 `npm install`
 `node create-database.js`
 
-### **6. Consulte os endpoints**
+### **6. Teste a API via Swagger**
 
-Na pasta _collection_ está disponível uma collection do Insomnia para teste dos endpoints.
+Acesse o Swagger para testar os endpoints da API através do link http://localhost:3000/api.
+
+### **7. Consulte os endpoints**
+
+Na pasta _collection_ está disponível também uma collection do Insomnia para teste dos endpoints, caso prefira.
 
 ---
 
