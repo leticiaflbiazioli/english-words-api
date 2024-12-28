@@ -31,7 +31,7 @@ export class HistoryService {
         .find({ userId })
         .skip((page - 1) * limit)
         .limit(limit)
-        .sort({ visitedAt: -1 })
+        .sort({ added: -1 })
         .exec(),
 
       this.historyModel.countDocuments({ userId }),

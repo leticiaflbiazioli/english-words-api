@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { UserService } from '../../src/user/user.service';
+import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -46,6 +46,7 @@ export class AuthController {
     @Body() body: { name: string; email: string; password: string },
   ) {
     try {
+      console.log('Chamei a signup');
       const savedUser = await this.usersService.create(
         body.name,
         body.email,
