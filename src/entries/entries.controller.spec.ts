@@ -42,6 +42,7 @@ describe('EntriesController', () => {
           useValue: {
             addFavorite: jest.fn(),
             removeFavorite: jest.fn(),
+            validateFavorite: jest.fn(),
           },
         },
       ],
@@ -103,6 +104,7 @@ describe('EntriesController', () => {
         fromCache: false,
       });
       jest.spyOn(historyService, 'saveSearch').mockResolvedValue(undefined);
+      jest.spyOn(favoritesService, 'validateFavorite').mockResolvedValue(false);
 
       const mockResponse = {
         setHeader: jest.fn(),
@@ -119,6 +121,7 @@ describe('EntriesController', () => {
       expect(mockResponse.send).toHaveBeenCalledWith({
         word: 'example',
         data: mockData,
+        isFavorite: false,
       });
       expect(historyService.saveSearch).toHaveBeenCalledWith('example', '123');
     });

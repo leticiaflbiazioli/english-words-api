@@ -92,8 +92,12 @@ export class EntriesController {
       res.setHeader('x-response-time', responseTime);
 
       await this.historyService.saveSearch(word, userId);
+      const isFavorite = await this.favoritesService.validateFavorite(
+        word,
+        userId,
+      );
 
-      res.send({ word, data });
+      res.send({ word, data, isFavorite });
     } catch (error) {
       throw new HttpException(
         { message: 'Erro ao buscar a palavra' },

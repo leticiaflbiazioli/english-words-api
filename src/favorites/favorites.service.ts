@@ -65,4 +65,12 @@ export class FavoritesService {
       hasPrev: page > 1,
     };
   }
+
+  async validateFavorite(word: string, userId: string): Promise<boolean> {
+    const isFavorite = await this.favoriteModel.countDocuments({
+      userId,
+      word,
+    });
+    return isFavorite > 0;
+  }
 }
